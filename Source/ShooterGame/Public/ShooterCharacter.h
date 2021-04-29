@@ -30,5 +30,12 @@ private:
 
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
+	void LookUpRate(float AxisValue);
+	void LookRightRate(float AxisValue);
+
+	UPROPERTY(EditAnywhere, Category = "Camera", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float RotateRate = 50.0f;
 };
+
+
 
