@@ -4,6 +4,7 @@
 #include "Gun.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AGun::AGun()
@@ -19,6 +20,7 @@ AGun::AGun()
 
 	ShootSound = CreateDefaultSubobject<UAudioComponent>(FName(TEXT("ShootSound")));
 	ShootSound->SetupAttachment(Root);
+	ShootSound->bAutoActivate = false;
 }
 
 // Called when the game starts or when spawned
@@ -37,7 +39,23 @@ void AGun::Tick(float DeltaTime)
 
 void AGun::PullTrigger() 
 {
-	if(!ensure(MuzzleFlash && ShootSound)) return;
+	// Get player viewpoint
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	if(!OwnerPawn) return;
+
+	AController* OwnerController = OwnerPawn->GetController();
+	if(!OwnerController) return;
+
+	FVector out_Location(0);
+	FRotator out_Rotation(0);
+	OwnerController->GetPlayerViewPoint(out_Location, out_Rotation);
+
+	// To visualize the camera
+	DrawDebugCamera(GetWorld(), out_Location, out_Rotation, 90, 1, FColor::Red, true );
+	
+	// Muzzle flash and sound
+	if(!ensure(MuzzleFlash)) return;
 	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMesh, TEXT("MuzzleFlashSocket"));
-	ShootSound->Play();
+	
+	if(ShootSound) ShootSound->Play();
 }
