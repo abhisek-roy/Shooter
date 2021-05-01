@@ -2,6 +2,8 @@
 
 
 #include "Gun.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 AGun::AGun()
@@ -14,6 +16,9 @@ AGun::AGun()
 
 	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName(TEXT("GunMesh")));
 	GunMesh->SetupAttachment(Root);
+
+	ShootSound = CreateDefaultSubobject<UAudioComponent>(FName(TEXT("ShootSound")));
+	ShootSound->SetupAttachment(Root);
 }
 
 // Called when the game starts or when spawned
@@ -30,3 +35,9 @@ void AGun::Tick(float DeltaTime)
 
 }
 
+void AGun::PullTrigger() 
+{
+	if(!ensure(MuzzleFlash && ShootSound)) return;
+	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMesh, TEXT("MuzzleFlashSocket"));
+	ShootSound->Play();
+}
