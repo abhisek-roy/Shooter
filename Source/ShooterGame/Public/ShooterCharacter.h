@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "ShooterCharacter.generated.h"
 
+class AGun;
+
 UCLASS()
 class SHOOTERGAME_API AShooterCharacter : public ACharacter
 {
@@ -35,7 +37,11 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Camera", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float RotateRate = 50.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AGun> GunBlueprint;
+
+	UPROPERTY()
+	AGun* Gun = nullptr;
 };
-
-
 
