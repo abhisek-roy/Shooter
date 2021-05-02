@@ -23,6 +23,6 @@ protected:
 
 private:
 
-	UPROPERTY(EditDefaultsOnly, Category = "AI", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float AcceptanceRadius = 200.f;
+	UPROPERTY(EditAnywhere)
+	class UBehaviorTree* AIBehavior = nullptr; 
 };
