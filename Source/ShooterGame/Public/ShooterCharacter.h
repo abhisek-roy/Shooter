@@ -27,6 +27,11 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	UFUNCTION(BlueprintPure)
+	float GetHealth() const { return CurrentHealth;}
 
 private:
 
@@ -38,6 +43,12 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Camera", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float RotateRate = 50.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Setup", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MaxHealth = 100.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Setup", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float CurrentHealth = MaxHealth;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AGun> GunBlueprint;

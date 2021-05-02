@@ -39,6 +39,18 @@ private:
 	UParticleSystem* MuzzleFlash = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
+	UParticleSystem* ImpactFlashCharacter = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	UParticleSystem* ImpactFlashWorld = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
 	UAudioComponent* ShootSound = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	float Range = 10000.f;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	float Damage = 10.f;
 };
 

@@ -4,7 +4,7 @@
 #include "Gun.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
-#include "DrawDebugHelpers.h"
+#include "ShooterCharacter.h"
 
 // Sets default values
 AGun::AGun()
@@ -46,13 +46,43 @@ void AGun::PullTrigger()
 	AController* OwnerController = OwnerPawn->GetController();
 	if(!OwnerController) return;
 
-	FVector out_Location(0);
-	FRotator out_Rotation(0);
-	OwnerController->GetPlayerViewPoint(out_Location, out_Rotation);
+	FVector CameraLocation(0);
+	FRotator CameraRotation(0);
+	OwnerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
 
-	// To visualize the camera
-	DrawDebugCamera(GetWorld(), out_Location, out_Rotation, 90, 1, FColor::Red, true );
+	// Shot location
+	FCollisionQueryParams CollisionParams(FCollisionQueryParams::DefaultQueryParam);
+	CollisionParams.AddIgnoredActor(OwnerPawn);
+	FHitResult OutHit;
+	FVector EndPoint = CameraLocation + Range * CameraRotation.Vector();
+	bool bHit = GetWorld()->LineTraceSingleByChannel(OutHit,
+				CameraLocation,
+				EndPoint,
+				ECollisionChannel::ECC_GameTraceChannel1,
+				CollisionParams, 
+				FCollisionResponseParams::DefaultResponseParam
+			);
 	
+	if(bHit)
+	{
+		FVector ShotDirection = - CameraRotation.Vector();
+
+		AShooterCharacter* CharacterHit = Cast<AShooterCharacter>(OutHit.GetActor());
+		if(!OutHit.GetActor()) 
+		{
+			return;
+		}else if(!CharacterHit)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFlashWorld, OutHit.Location, ShotDirection.Rotation());
+		}else
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFlashCharacter, OutHit.Location, ShotDirection.Rotation());
+
+			FPointDamageEvent DamageEvent(Damage, OutHit, ShotDirection, nullptr);
+			CharacterHit->TakeDamage(Damage, DamageEvent, OwnerController, this);
+		}
+	}
+
 	// Muzzle flash and sound
 	if(!ensure(MuzzleFlash)) return;
 	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMesh, TEXT("MuzzleFlashSocket"));
