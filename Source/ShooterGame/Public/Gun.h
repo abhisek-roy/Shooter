@@ -47,10 +47,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	UAudioComponent* ShootSound = nullptr;
 
-	UPROPERTY(EditAnywhere, Category = "Setup")
+	UPROPERTY(EditAnywhere, Category = "Setup", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Range = 10000.f;
 
-	UPROPERTY(EditAnywhere, Category = "Setup")
+	UPROPERTY(EditAnywhere, Category = "Setup", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Damage = 10.f;
 };
 
