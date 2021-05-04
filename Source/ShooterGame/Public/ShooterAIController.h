@@ -25,4 +25,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UBehaviorTree* AIBehavior = nullptr; 
+
+	FVector PlayerLocation;
+	FVector LastKnownPlayerLocation;
 };
