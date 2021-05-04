@@ -53,6 +53,7 @@ void AGun::PullTrigger()
 	// Shot location
 	FCollisionQueryParams CollisionParams(FCollisionQueryParams::DefaultQueryParam);
 	CollisionParams.AddIgnoredActor(OwnerPawn);
+	CollisionParams.AddIgnoredActor(this);
 	FHitResult OutHit;
 	FVector EndPoint = CameraLocation + Range * CameraRotation.Vector();
 	bool bHit = GetWorld()->LineTraceSingleByChannel(OutHit,
