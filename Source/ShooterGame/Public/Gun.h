@@ -52,5 +52,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Setup", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Damage = 10.f;
+
+	bool GunTrace(FHitResult &Hit, FVector& ShotDirection);
+	AController* GetOwnerController() const;
+
 };
 
