@@ -16,4 +16,7 @@ class SHOOTERGAME_API AKillEmAllGameMode : public AShooterGameGameModeBase
 	
 public:
 	virtual void PawnKilled(APawn* PawnKilled) override;
+
+private:
+	void EndGame(bool bIsPlayerWinner);
 };
