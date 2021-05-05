@@ -35,6 +35,9 @@ public:
 	float GetHealth() const { return CurrentHealth;}
 
 	UFUNCTION(BlueprintPure)
+	float GetHealthPercent() const { return CurrentHealth/MaxHealth;}
+
+	UFUNCTION(BlueprintPure)
 	bool IsDead() const;
 
 private:

@@ -45,6 +45,9 @@ private:
 	UParticleSystem* ImpactFlashWorld = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
+	USoundBase *ImpactSound = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
 	UAudioComponent* ShootSound = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Setup", meta = (ClampMin = "0.0", UIMin = "0.0"))

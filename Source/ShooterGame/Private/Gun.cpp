@@ -34,29 +34,30 @@ void AGun::BeginPlay()
 void AGun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AGun::PullTrigger() 
 {
-	FHitResult OutHit;
+	FHitResult Hit;
 	FVector ShotDirection;
-	bool bSuccess = GunTrace(OutHit, ShotDirection);
+	bool bSuccess = GunTrace(Hit, ShotDirection);
 	
 	if(bSuccess)
 	{
-		AShooterCharacter* CharacterHit = Cast<AShooterCharacter>(OutHit.GetActor());
-		if(!OutHit.GetActor()) 
+		AShooterCharacter* CharacterHit = Cast<AShooterCharacter>(Hit.GetActor());
+		if(!Hit.GetActor()) 
 		{
 			return;
 		}else if(!CharacterHit)
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFlashWorld, OutHit.Location, ShotDirection.Rotation());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFlashWorld, Hit.Location, ShotDirection.Rotation());
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, Hit.Location);
 		}else
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFlashCharacter, OutHit.Location, ShotDirection.Rotation());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFlashCharacter, Hit.Location, ShotDirection.Rotation());
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, Hit.Location);
 
-			FPointDamageEvent DamageEvent(Damage, OutHit, ShotDirection, nullptr);
+			FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, nullptr);
 			AController *OwnerController = GetOwnerController();
 			CharacterHit->TakeDamage(Damage, DamageEvent, OwnerController, this);
 		}
@@ -69,7 +70,7 @@ void AGun::PullTrigger()
 	if(ShootSound) ShootSound->Play();
 }
 
-bool AGun::GunTrace(FHitResult &OutHit, FVector& ShotDirection) 
+bool AGun::GunTrace(FHitResult &Hit, FVector& ShotDirection) 
 {
 	AController *OwnerController = GetOwnerController();
 	if (OwnerController == nullptr)
@@ -84,7 +85,7 @@ bool AGun::GunTrace(FHitResult &OutHit, FVector& ShotDirection)
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 	Params.AddIgnoredActor(GetOwner());
-	return GetWorld()->LineTraceSingleByChannel(OutHit, Location, End, ECollisionChannel::ECC_GameTraceChannel1, Params);
+	return GetWorld()->LineTraceSingleByChannel(Hit, Location, End, ECollisionChannel::ECC_GameTraceChannel1, Params);
 }
 
 AController* AGun::GetOwnerController() const
