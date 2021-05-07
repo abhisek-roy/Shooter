@@ -21,7 +21,6 @@ void AShooterAIController::BeginPlay()
         {
             PatrolPoints = PatrolRouteComp->GetPatrolPoints();
             auto PatrolPointsNum = PatrolPoints.Num();
-        
             if (PatrolPointsNum > 0)
             {
                 GetBlackboardComponent()->SetValueAsBool(TEXT("CanPatrol"), true);                
@@ -46,6 +45,5 @@ bool AShooterAIController::IsDead() const
     {
         return ControlledCharacter->IsDead();
     }
-
     return true;
 }

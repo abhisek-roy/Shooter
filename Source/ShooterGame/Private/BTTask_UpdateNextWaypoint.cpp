@@ -18,7 +18,6 @@ EBTNodeResult::Type UBTTask_UpdateNextWaypoint::ExecuteTask(UBehaviorTreeCompone
     auto BlackboardComp = OwnerComp.GetBlackboardComponent();
 
     AShooterAIController* AIOwner = Cast<AShooterAIController>(OwnerComp.GetAIOwner());
-    
     if(AIOwner != nullptr)
     {
         auto Num = AIOwner->PatrolPoints.Num();
