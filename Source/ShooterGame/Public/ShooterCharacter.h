@@ -56,7 +56,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Setup", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float CurrentHealth = MaxHealth;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<AGun> GunBlueprint;
 
 	UPROPERTY()
