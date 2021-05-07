@@ -8,6 +8,9 @@
 
 class AGun;
 
+/**
+ * This is the Base character class.
+ */
 UCLASS()
 class SHOOTERGAME_API AShooterCharacter : public ACharacter
 {
@@ -61,6 +64,9 @@ private:
 
 	UPROPERTY()
 	AGun* Gun = nullptr;
+
+	UPROPERTY(EditInstanceOnly)
+	class UPatrolRoute* PatrolRouteComp = nullptr;
 };
 
 

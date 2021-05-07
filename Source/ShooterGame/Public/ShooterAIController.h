@@ -7,7 +7,7 @@
 #include "ShooterAIController.generated.h"
 
 /**
- * 
+ * AIController for the ShooterCharacter.
  */
 UCLASS()
 class SHOOTERGAME_API AShooterAIController : public AAIController
@@ -18,6 +18,9 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 	bool IsDead() const;
+
+	UPROPERTY()
+	TArray<AActor*> PatrolPoints;
 	
 protected:
 	virtual void BeginPlay() override;

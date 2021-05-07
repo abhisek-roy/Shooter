@@ -4,7 +4,7 @@
 #include "ShooterAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "ShooterCharacter.h"
-#include "PatrolGuard.h"
+#include "PatrolRoute.h"
 
 void AShooterAIController::BeginPlay()
 {
@@ -13,14 +13,16 @@ void AShooterAIController::BeginPlay()
     if(AIBehavior != nullptr) 
     {
         RunBehaviorTree(AIBehavior);
-        // SetupBlackBoard()
+        // Set up BlackBoard variables
         GetBlackboardComponent()->SetValueAsVector(TEXT("StartLocation"), GetPawn()->GetActorLocation());
-        APatrolGuard* AIEnemy = Cast<APatrolGuard>(GetPawn());
-        if(AIEnemy != nullptr)
+        AActor* AIEnemy = Cast<AActor>(GetPawn());
+        UPatrolRoute* PatrolRouteComp = AIEnemy ? AIEnemy->FindComponentByClass<UPatrolRoute>() : nullptr;
+        if(PatrolRouteComp != nullptr)
         {
-            auto Num = AIEnemy->PatrolPoints.Num();
-            UE_LOG(LogTemp, Warning, TEXT("%f: AIPatrol has %i waypoints."), GetWorld()->GetTimeSeconds(), Num);
-            if (Num > 0)
+            PatrolPoints = PatrolRouteComp->GetPatrolPoints();
+            auto PatrolPointsNum = PatrolPoints.Num();
+        
+            if (PatrolPointsNum > 0)
             {
                 GetBlackboardComponent()->SetValueAsBool(TEXT("CanPatrol"), true);                
             }else{
