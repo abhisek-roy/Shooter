@@ -7,7 +7,7 @@
 #include "BTService_PlayerLocationIfSeen.generated.h"
 
 /**
- * 
+ * Updates according to perception.
  */
 UCLASS()
 class SHOOTERGAME_API UBTService_PlayerLocationIfSeen : public UBTService_BlackboardBase

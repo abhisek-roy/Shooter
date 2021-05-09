@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "ShooterAIController.generated.h"
 
+class UAIPerceptionComponent;
+
 /**
  * AIController for the ShooterCharacter.
  */
@@ -28,7 +30,7 @@ protected:
 private:
 
 	UPROPERTY(EditAnywhere)
-	class UBehaviorTree* AIBehavior = nullptr; 
+	class UBehaviorTree* AIBehavior = nullptr;
 
 	FVector PlayerLocation;
 	FVector LastKnownPlayerLocation;

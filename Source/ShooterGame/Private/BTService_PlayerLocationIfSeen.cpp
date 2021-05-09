@@ -2,10 +2,9 @@
 
 
 #include "BTService_PlayerLocationIfSeen.h"
-#include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "GameFramework/Pawn.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionComponent.h"
 
 UBTService_PlayerLocationIfSeen::UBTService_PlayerLocationIfSeen()
 {
@@ -16,24 +15,35 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent &OwnerComp
 {
     Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-    APawn *PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-    if (PlayerPawn == nullptr)
-    {
-        return;
-    }
+    UAIPerceptionComponent* PerceptionComp = OwnerComp.GetAIOwner()->FindComponentByClass<UAIPerceptionComponent>();
 
-    if (OwnerComp.GetAIOwner() == nullptr)
+    if(PerceptionComp != nullptr)
     {
-        return;
-    }
-
-    if (OwnerComp.GetAIOwner()->LineOfSightTo(PlayerPawn))
+        UAIPerceptionComponent::FActorPerceptionContainer::TConstIterator It = PerceptionComp->GetPerceptualDataConstIterator();
+        for (; It; ++It)
+        {
+            const FActorPerceptionInfo& ActorPerceptionInfo = It->Value;
+            AActor* DetectedActor = ActorPerceptionInfo.Target.Get();
+    
+            if (DetectedActor->ActorHasTag(FName("Player")))
+            {
+            	for (const FAIStimulus& Stimulus : ActorPerceptionInfo.LastSensedStimuli)
+            	{
+            		const UAISenseConfig* SenseConfig = PerceptionComp->GetSenseConfig(Stimulus.Type);
+            		if (Stimulus.IsValid() && (Stimulus.IsExpired() == false) && SenseConfig)
+            		{
+                        UE_LOG(LogTemp, Warning, TEXT("%f: %s actors detected."), GetWorld()->GetTimeSeconds(), *DetectedActor->GetName());
+            			OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), DetectedActor);
+                        break;
+            		}else
+                    {
+                        OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
+                    }
+            	}
+            }
+        }
+    }else
     {
-        OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), PlayerPawn);
+        UE_LOG(LogTemp, Error, TEXT("%f: Perception component not found on %s!"), GetWorld()->GetTimeSeconds(), *OwnerComp.GetAIOwner()->GetPawn()->GetName());
     }
-    else
-    {
-        OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
-    }
-
 }
