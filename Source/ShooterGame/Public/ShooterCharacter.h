@@ -67,6 +67,10 @@ private:
 
 	UPROPERTY(EditInstanceOnly)
 	class UPatrolRoute* PatrolRouteComp = nullptr;
+
+	// Loudness - is the relative loudness of this noise (range 0.0 to 1.0).  Directly affects the hearing range specified by the AI's HearingThreshold.
+	UPROPERTY(EditAnywhere, Category = "Setup", meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+	float Loudness = 0.0;
 };
 
 

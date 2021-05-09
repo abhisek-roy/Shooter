@@ -56,6 +56,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 void AShooterCharacter::Shoot() 
 {
 	Gun->PullTrigger();
+	PawnMakeNoise(Loudness, GetActorLocation());
 }
 
 float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)

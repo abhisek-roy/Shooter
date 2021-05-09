@@ -57,9 +57,9 @@ void AGun::PullTrigger()
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFlashCharacter, Hit.Location, ShotDirection.Rotation());
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, Hit.Location);
 
-			FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, nullptr);
+			FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, UDamageType::StaticClass());
 			AController *OwnerController = GetOwnerController();
-			CharacterHit->TakeDamage(Damage, DamageEvent, OwnerController, this);
+			CharacterHit->TakeDamage(Damage, DamageEvent, OwnerController, GetOwner());
 		}
 	}
 
