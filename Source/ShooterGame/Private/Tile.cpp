@@ -13,7 +13,7 @@ ATile::ATile()
 }
 
 
-void ATile::PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1) 
+void ATile::PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300) 
 {
 	FVector MinPoint(0), MaxPoint(0);
 	MinPoint = FVector(0, -3500, 50);
@@ -23,41 +23,56 @@ void ATile::PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn = 1, in
 
 	for(int i = 0; i < NumberToSpawn; i++)
 	{
-		FVector RandPoint = FMath::RandPointInBox(FBox(MinPoint, MaxPoint));
-		AActor* ActorSpawned = GetWorld()->SpawnActor(ActorToSpawn);
-		ActorSpawned->SetActorRelativeLocation(RandPoint);
-		ActorSpawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		FVector SpawnPoint = GetEmptyLocation(MinPoint, MaxPoint, Radius);
+		PlaceActor(ActorToSpawn, SpawnPoint);
 	}
 }
 
-// Called when the game starts or when spawned
-void ATile::BeginPlay()
+FVector ATile::GetEmptyLocation(FVector MinPoint, FVector MaxPoint, float Radius) 
 {
-	Super::BeginPlay();
-	
-	CastSphere(GetActorLocation(), 300);
-	CastSphere(GetActorLocation() + FVector(0, 0, 1000), 300);
+	bool HasHit = true;
+	FVector RandPoint(0);
+	while(HasHit)
+	{
+		RandPoint = FMath::RandPointInBox(FBox(MinPoint, MaxPoint));
+		HasHit = IsEmptySpace(GetActorLocation() + RandPoint, Radius);
+		FColor ResultColor = HasHit ? FColor::Red : FColor::Green;
+		DrawDebugCapsule(GetWorld(), GetActorLocation() + RandPoint, 0, Radius, FQuat::Identity, ResultColor, true, 100);
+	}
+
+	return RandPoint;
 }
 
-// Called every frame
-void ATile::Tick(float DeltaTime)
+void ATile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, FVector Location) 
 {
-	Super::Tick(DeltaTime);
-
+	AActor* ActorSpawned = GetWorld()->SpawnActor(ActorToSpawn);
+	ActorSpawned->SetActorRelativeLocation(Location);
+	ActorSpawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 }
 
-bool ATile::CastSphere(FVector Location, float Radius)
+bool ATile::IsEmptySpace(FVector Location, float Radius)
 {
+	// Sphere casting
 	FHitResult HitResult;
 	bool HasHit = GetWorld()->SweepSingleByChannel(
 		HitResult,
 		Location,
 		Location,
 		FQuat::Identity,
-		ECollisionChannel::ECC_Camera,
+		ECollisionChannel::ECC_GameTraceChannel2,
 		FCollisionShape::MakeSphere(Radius)
 	);
-	FColor ResultColor = HasHit ? FColor::Red : FColor::Green;
-	DrawDebugSphere(GetWorld(), Location, Radius, 10, ResultColor, true, 100);
 	return HasHit;
+}
+
+// Called when the game starts or when spawned
+void ATile::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+// Called every frame
+void ATile::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
