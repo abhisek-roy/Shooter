@@ -24,10 +24,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Setup")
-	void PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float Radius);
+	void PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300, float MinScale = 1, float MaxScale = 1);
 
 private:
 	bool IsEmptySpace(FVector Location, float Radius);
-	void PlaceActor(TSubclassOf<AActor> ActorToSpawn, FVector Location);
+	void PlaceActor(TSubclassOf<AActor> ActorToSpawn, FVector Location, float Yaw, float Scale);
 	FVector GetEmptyLocation(FVector MinPoint, FVector MaxPoint, float Radius);
 };

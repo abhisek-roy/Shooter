@@ -12,19 +12,20 @@ ATile::ATile()
 
 }
 
-
-void ATile::PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300) 
+void ATile::PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float Radius, float MinScale, float MaxScale) 
 {
 	FVector MinPoint(0), MaxPoint(0);
 	MinPoint = FVector(0, -3500, 50);
 	MaxPoint = FVector(14000, 3500, 50);
 
 	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
+	float Scale = FMath::RandRange(MinScale, MaxScale);
 
 	for(int i = 0; i < NumberToSpawn; i++)
 	{
-		FVector SpawnPoint = GetEmptyLocation(MinPoint, MaxPoint, Radius);
-		PlaceActor(ActorToSpawn, SpawnPoint);
+		FVector SpawnPoint = GetEmptyLocation(MinPoint, MaxPoint, Radius * Scale);
+		float RandRotation = FMath::RandRange(-180, 180);
+		PlaceActor(ActorToSpawn, SpawnPoint, RandRotation, Scale);
 	}
 }
 
@@ -32,22 +33,26 @@ FVector ATile::GetEmptyLocation(FVector MinPoint, FVector MaxPoint, float Radius
 {
 	bool HasHit = true;
 	FVector RandPoint(0);
-	while(HasHit)
+	int32 MaxIter = 1;
+	while(HasHit && MaxIter < 100)
 	{
 		RandPoint = FMath::RandPointInBox(FBox(MinPoint, MaxPoint));
 		HasHit = IsEmptySpace(GetActorLocation() + RandPoint, Radius);
-		FColor ResultColor = HasHit ? FColor::Red : FColor::Green;
-		DrawDebugCapsule(GetWorld(), GetActorLocation() + RandPoint, 0, Radius, FQuat::Identity, ResultColor, true, 100);
+		MaxIter++;
+		// FColor ResultColor = HasHit ? FColor::Red : FColor::Green;
+		// DrawDebugCapsule(GetWorld(), GetActorLocation() + RandPoint, 0, Radius, FQuat::Identity, ResultColor, true, 100);
 	}
 
 	return RandPoint;
 }
 
-void ATile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, FVector Location) 
+void ATile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, FVector Location, float Rotation, float Scale) 
 {
 	AActor* ActorSpawned = GetWorld()->SpawnActor(ActorToSpawn);
 	ActorSpawned->SetActorRelativeLocation(Location);
 	ActorSpawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+	ActorSpawned->SetActorRotation(FRotator(0, Rotation, 0));
+	ActorSpawned->SetActorScale3D(FVector(Scale));
 }
 
 bool ATile::IsEmptySpace(FVector Location, float Radius)
