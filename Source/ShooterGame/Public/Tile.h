@@ -8,6 +8,16 @@
 
 class UActorPool;
 
+USTRUCT()
+struct FSpawnPosition
+{
+	GENERATED_USTRUCT_BODY()
+
+	FVector Location;
+	float Rotation;
+	float Scale;
+};
+
 UCLASS()
 class SHOOTERGAME_API ATile : public AActor
 {
@@ -41,9 +51,10 @@ public:
 
 private:
 	bool IsEmptySpace(FVector Location, float Radius);
-	void PlaceActor(TSubclassOf<AActor> ActorToSpawn, FVector Location, float Yaw, float Scale);
+	void PlaceActor(TSubclassOf<AActor> ActorToSpawn, const FSpawnPosition& SpawnPosition);
 	FVector GetEmptyLocation(FVector MinPoint, FVector MaxPoint, float Radius);
 	void PositionNavMeshBoundsVolume();
+	TArray<FSpawnPosition> GetSpawnPoints(int32 MinSpawn, int32 MaxSpawn, float Radius, float MinScale, float MaxScale);
 
 	AActor* NavMeshBoundsVolume;
 	UActorPool* Pool;
