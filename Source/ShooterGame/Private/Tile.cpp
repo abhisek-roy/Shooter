@@ -4,6 +4,7 @@
 #include "Tile.h"
 #include "DrawDebugHelpers.h"
 #include "ActorPool.h"
+#include "NavMesh/NavMeshBoundsVolume.h"
 
 // Sets default values
 ATile::ATile()
@@ -11,26 +12,45 @@ ATile::ATile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	MinExtent = FVector(0, -3500, 5);
+	MaxExtent = FVector(7000, 3500, 5);
+	NavigationBoundsOffset = FVector(3500, 0, 0);
+}
+
+void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	Pool->Return(NavMeshBoundsVolume);
 }
 
 void ATile::SetPool(UActorPool* InPool)
 {
 	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting Pool %s"), *(this->GetName()), *(InPool->GetName()));
 	Pool = InPool;
+	PositionNavMeshBoundsVolume();
+}
+
+void ATile::PositionNavMeshBoundsVolume()
+{
+	NavMeshBoundsVolume = Pool->Checkout();
+	if (NavMeshBoundsVolume == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[%s] Not enough actors in pool."), *GetName());
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName());
+	NavMeshBoundsVolume->SetActorLocation(GetActorLocation() + NavigationBoundsOffset);
+	FNavigationSystem::Build(*GetWorld());
 }
 
 void ATile::PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float Radius, float MinScale, float MaxScale) 
 {
-	FVector MinPoint(0), MaxPoint(0);
-	MinPoint = FVector(0, -3500, 5);
-	MaxPoint = FVector(7000, 3500, 5);
-
 	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
 	float Scale = FMath::RandRange(MinScale, MaxScale);
 
 	for(int i = 0; i < NumberToSpawn; i++)
 	{
-		FVector SpawnPoint = GetEmptyLocation(MinPoint, MaxPoint, Radius * Scale);
+		FVector SpawnPoint = GetEmptyLocation(MinExtent, MaxExtent, Radius * Scale);
 		float RandRotation = FMath::RandRange(-180, 180);
 		PlaceActor(ActorToSpawn, SpawnPoint, RandRotation, Scale);
 	}
