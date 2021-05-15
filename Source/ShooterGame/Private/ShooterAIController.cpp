@@ -14,6 +14,7 @@ void AShooterAIController::BeginPlay()
     {
         RunBehaviorTree(AIBehavior);
         // Set up BlackBoard variables
+        if(!GetPawn()) return;
         GetBlackboardComponent()->SetValueAsVector(TEXT("StartLocation"), GetPawn()->GetActorLocation());
         AActor* AIEnemy = Cast<AActor>(GetPawn());
         UPatrolRoute* PatrolRouteComp = AIEnemy ? AIEnemy->FindComponentByClass<UPatrolRoute>() : nullptr;

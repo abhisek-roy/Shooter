@@ -46,8 +46,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void SetPool(UActorPool* Pool);
 
-	UFUNCTION(BlueprintCallable, Category = "Setup")
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
 	void PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300, float MinScale = 1, float MaxScale = 1);
+
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+	void PlaceAIPawns(TSubclassOf<APawn> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300, float ZOffset = 100);
 
 private:
 	bool IsEmptySpace(FVector Location, float Radius);

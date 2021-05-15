@@ -45,11 +45,34 @@ void ATile::PositionNavMeshBoundsVolume()
 
 void ATile::PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float Radius, float MinScale, float MaxScale) 
 {
-	TArray<FSpawnPosition> SpawnPoints = GetSpawnPoints(MinSpawn, MaxSpawn, Radius, MinScale, MaxScale);
-	
-	for(FSpawnPosition SpawnPoint : SpawnPoints)
+	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
+	FSpawnPosition SpawnPosition;
+
+	for(int i = 0; i < NumberToSpawn; i++)
 	{
-		PlaceActor(ActorToSpawn, SpawnPoint);
+		SpawnPosition.Scale = FMath::RandRange(MinScale, MaxScale);
+		SpawnPosition.Location = GetEmptyLocation(MinExtent, MaxExtent, Radius * SpawnPosition.Scale);
+		SpawnPosition.Rotation = FMath::RandRange(-180, 180);
+		PlaceActor(ActorToSpawn, SpawnPosition);
+	}
+}
+
+void ATile::PlaceAIPawns(TSubclassOf<APawn> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float Radius, float ZOffset) 
+{
+	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
+	FSpawnPosition SpawnPosition;
+
+	for(int i = 0; i < NumberToSpawn; i++)
+	{
+		SpawnPosition.Scale = 1;
+		SpawnPosition.Location = GetEmptyLocation(MinExtent, MaxExtent, Radius * SpawnPosition.Scale);
+		SpawnPosition.Rotation = FMath::RandRange(-180, 180);
+		APawn* ActorSpawned = GetWorld()->SpawnActor<APawn>(ActorToSpawn);
+		ActorSpawned->SetActorRelativeLocation(SpawnPosition.Location + FVector(0, 0, ZOffset));
+		ActorSpawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		ActorSpawned->SetActorRotation(FRotator(0, SpawnPosition.Rotation, 0));
+		ActorSpawned->Tags.Add(FName(TEXT("Enemy")));
+		ActorSpawned->SpawnDefaultController();
 	}
 }
 
@@ -88,7 +111,7 @@ FVector ATile::GetEmptyLocation(FVector MinPoint, FVector MaxPoint, float Radius
 
 void ATile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, const FSpawnPosition& SpawnPosition) 
 {
-	AActor* ActorSpawned = GetWorld()->SpawnActor(ActorToSpawn);
+	AActor* ActorSpawned = GetWorld()->SpawnActor<AActor>(ActorToSpawn);
 	ActorSpawned->SetActorRelativeLocation(SpawnPosition.Location);
 	ActorSpawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 	ActorSpawned->SetActorRotation(FRotator(0, SpawnPosition.Rotation, 0));
