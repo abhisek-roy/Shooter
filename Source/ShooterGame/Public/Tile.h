@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
+class UActorPool;
+
 UCLASS()
 class SHOOTERGAME_API ATile : public AActor
 {
@@ -23,6 +25,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Pool")
+	void SetPool(UActorPool* Pool);
+
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300, float MinScale = 1, float MaxScale = 1);
 
@@ -30,4 +35,6 @@ private:
 	bool IsEmptySpace(FVector Location, float Radius);
 	void PlaceActor(TSubclassOf<AActor> ActorToSpawn, FVector Location, float Yaw, float Scale);
 	FVector GetEmptyLocation(FVector MinPoint, FVector MaxPoint, float Radius);
+
+	UActorPool* Pool;
 };

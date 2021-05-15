@@ -3,6 +3,7 @@
 
 #include "Tile.h"
 #include "DrawDebugHelpers.h"
+#include "ActorPool.h"
 
 // Sets default values
 ATile::ATile()
@@ -12,11 +13,17 @@ ATile::ATile()
 
 }
 
+void ATile::SetPool(UActorPool* InPool)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting Pool %s"), *(this->GetName()), *(InPool->GetName()));
+	Pool = InPool;
+}
+
 void ATile::PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float Radius, float MinScale, float MaxScale) 
 {
 	FVector MinPoint(0), MaxPoint(0);
-	MinPoint = FVector(0, -3500, 50);
-	MaxPoint = FVector(14000, 3500, 50);
+	MinPoint = FVector(0, -3500, 5);
+	MaxPoint = FVector(7000, 3500, 5);
 
 	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
 	float Scale = FMath::RandRange(MinScale, MaxScale);
