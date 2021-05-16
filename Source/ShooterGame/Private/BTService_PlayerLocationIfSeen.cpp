@@ -25,7 +25,7 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent &OwnerComp
             const FActorPerceptionInfo& ActorPerceptionInfo = It->Value;
             AActor* DetectedActor = ActorPerceptionInfo.Target.Get();
     
-            if (DetectedActor->ActorHasTag(FName("Player")))
+            if (DetectedActor != nullptr && DetectedActor->ActorHasTag(FName("Player")))
             {
             	for (const FAIStimulus& Stimulus : ActorPerceptionInfo.LastSensedStimuli)
             	{

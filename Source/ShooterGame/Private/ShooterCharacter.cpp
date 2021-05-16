@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "ShooterGameGameModeBase.h"
 #include "PatrolRoute.h"
+#include "GameFramework/Actor.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -103,5 +104,11 @@ void AShooterCharacter::LookUpRate(float AxisValue)
 void AShooterCharacter::LookRightRate(float AxisValue) 
 {
 	APawn::AddControllerYawInput(AxisValue * RotateRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AShooterCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason) 
+{
+	Super::EndPlay(EndPlayReason);
+	Gun->Destroy();
 }
 

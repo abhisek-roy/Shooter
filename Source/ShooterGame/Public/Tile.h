@@ -39,6 +39,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Navigation")
 	FVector NavigationBoundsOffset;
 
+	// Delay NavMesh build to avoid stutters
+	UPROPERTY(EditDefaultsOnly, Category="Spawning", meta = (ClampMin = "0", UIMin = "0"))
+	float NavMeshBuildDelay = 2.0;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -50,15 +54,23 @@ public:
 	void PlaceActors(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300, float MinScale = 1, float MaxScale = 1);
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
-	void PlaceAIPawns(TSubclassOf<APawn> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300, float ZOffset = 100);
+	void PlaceAIPawns(TSubclassOf<APawn> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300);
 
 private:
 	bool IsEmptySpace(FVector Location, float Radius);
+
+	template<class T>
+	void RandomlyPlaceActors(TSubclassOf<T> ActorToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 300, float MinScale = 1, float MaxScale = 1);
+	
 	void PlaceActor(TSubclassOf<AActor> ActorToSpawn, const FSpawnPosition& SpawnPosition);
+	void PlaceActor(TSubclassOf<APawn> ActorToSpawn, const FSpawnPosition& SpawnPosition);
+
 	FVector GetEmptyLocation(FVector MinPoint, FVector MaxPoint, float Radius);
 	void PositionNavMeshBoundsVolume();
-	TArray<FSpawnPosition> GetSpawnPoints(int32 MinSpawn, int32 MaxSpawn, float Radius, float MinScale, float MaxScale);
+	void CleanUp();
 
 	AActor* NavMeshBoundsVolume;
 	UActorPool* Pool;
+	TArray<AActor*> ActorsSpawnedList;
+	FTimerHandle Timer;
 };
