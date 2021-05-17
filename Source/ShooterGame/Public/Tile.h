@@ -70,7 +70,7 @@ private:
 	void CleanUp();
 
 	AActor* NavMeshBoundsVolume;
-	UActorPool* Pool;
+	UActorPool* Pool = nullptr;
 	TArray<AActor*> ActorsSpawnedList;
 	FTimerHandle Timer;
 };
