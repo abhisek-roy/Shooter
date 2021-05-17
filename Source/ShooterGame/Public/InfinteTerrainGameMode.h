@@ -20,9 +20,11 @@ class SHOOTERGAME_API AInfinteTerrainGameMode : public AShooterGameGameModeBase
 public:
 	UFUNCTION(BlueprintCallable, Category = "Bounds Pool")
 	void PopulateBoundsVolumePool();
+	virtual void PawnKilled(APawn* PawnKilled) override;
 
 private:
 	void AddToPool( ANavMeshBoundsVolume *VolumeToAdd);
+	void EndGame(bool bIsPlayerWinner);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pool")
