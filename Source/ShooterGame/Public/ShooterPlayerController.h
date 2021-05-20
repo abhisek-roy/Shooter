@@ -35,9 +35,12 @@ private:
 	FTimerHandle RestartTimer;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UUserWidget> HUDClass;
+	TSubclassOf<class UUserWidget> HUDClass = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	FString MainMenuLevelName = TEXT("MainMenu");
 
 	UPROPERTY()
-	UUserWidget *HUD;
+	UUserWidget *HUD = nullptr;
 
 };

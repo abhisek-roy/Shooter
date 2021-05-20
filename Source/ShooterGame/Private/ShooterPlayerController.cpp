@@ -4,12 +4,14 @@
 #include "ShooterPlayerController.h"
 #include "TimerManager.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 void AShooterPlayerController::BeginPlay()
 {
     Super::BeginPlay();
+    FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
+    if(CurrentLevelName != MainMenuLevelName)    HUD = CreateWidget(this, HUDClass);
 
-    HUD = CreateWidget(this, HUDClass);
     if (HUD != nullptr)
     {
         HUD->AddToViewport();
@@ -20,7 +22,10 @@ void AShooterPlayerController::GameHasEnded(class AActor *EndGameFocus, bool bIs
 {
     Super::GameHasEnded(EndGameFocus, bIsWinner);
 
-    HUD->RemoveFromViewport();
+    if (HUD != nullptr)
+    {
+        HUD->RemoveFromViewport();
+    }
     if (bIsWinner)
     {
         UUserWidget *WinScreen = CreateWidget(this, WinScreenClass);
