@@ -9,10 +9,10 @@
 void AShooterAIController::BeginPlay()
 {
 	Super::BeginPlay();
+    RunBehaviorTree(AIBehavior);
 
     if(AIBehavior != nullptr) 
     {
-        RunBehaviorTree(AIBehavior);
         // Set up BlackBoard variables
         if(!GetPawn()) return;
         GetBlackboardComponent()->SetValueAsVector(TEXT("StartLocation"), GetPawn()->GetActorLocation());
@@ -30,6 +30,7 @@ void AShooterAIController::BeginPlay()
             }
             GetBlackboardComponent()->SetValueAsInt(TEXT("WayPointIndex"), 0);
         }
+        
     }
 }
 
