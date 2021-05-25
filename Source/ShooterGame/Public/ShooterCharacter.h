@@ -8,6 +8,14 @@
 
 class AGun;
 
+UENUM()
+enum class EEnemyTypes
+{
+    HoldPosition,
+    Patrol,
+    MoveAbout
+};
+
 /**
  * This is the Base character class.
  */
@@ -44,12 +52,18 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsDead() const;
 
+	UFUNCTION(BlueprintPure)
+	EEnemyTypes GetEnemyType() const { return EnemyType;}
+
 private:
 
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void LookUpRate(float AxisValue);
 	void LookRightRate(float AxisValue);
+	
+	UPROPERTY(EditAnywhere)
+	EEnemyTypes EnemyType = EEnemyTypes::MoveAbout;
 
 	UPROPERTY(EditAnywhere, Category = "Camera", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float RotateRate = 50.0f;

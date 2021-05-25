@@ -15,10 +15,12 @@ UCLASS()
 class SHOOTERGAME_API AShooterAIController : public AAIController
 {
 	GENERATED_BODY()
+	AShooterAIController();
 	
 public:
 
 	virtual void Tick(float DeltaTime) override;
+	
 	bool IsDead() const;
 
 	UPROPERTY()
@@ -26,12 +28,15 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
-
+	
 private:
+
+	void SetupBBValues(APawn* InPawn);
 
 	UPROPERTY(EditAnywhere)
 	class UBehaviorTree* AIBehavior = nullptr;
 
 	FVector PlayerLocation;
 	FVector LastKnownPlayerLocation;
+	bool IsSetupDone = false;
 };
